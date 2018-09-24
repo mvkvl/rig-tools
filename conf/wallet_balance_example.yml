@@ -1,0 +1,9 @@
+crypto:
+  rvn:
+    rvn_donation: RD7yadeCvSDs4fCbEPuHstU3GHbiS7ao9q
+    description2: wallet_address_2
+  zen:
+   description_3: wallet_address_3
+  zec:
+   description_4: wallet_address_4
+   description_5: wallet_address_5
