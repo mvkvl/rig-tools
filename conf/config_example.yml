@@ -1,0 +1,35 @@
+crypto:
+
+  rvn:
+    rvn_donation: RD7yadeCvSDs4fCbEPuHstU3GHbiS7ao9q
+    description2: wallet_address_2
+  zen:
+   description_3: wallet_address_3
+  zec:
+   description_4: wallet_address_4
+   description_5: wallet_address_5
+
+pool:
+  rvn:
+    coinblockers:   RJ..............................9o # wallet
+    suprnova:       31............................................................f0 # apikey
+  zen:
+    suprnova:       31............................................................f0 # apikey
+    miningpoolhub:  67............................................................59_ABCDEF # apikey_userid
+  zec:
+    suprnova:       31............................................................f0 # apikey
+    nanopool:       t1................................N # wallet
+    flypool:        t1................................N # wallet
+    miningpoolhub:  67............................................................59_ABCDEF # apikey_userid
+
+output:
+  console:
+    enabled: yes
+  influxdb:
+    enabled: yes
+    server: localhost
+    port: 8086
+    login:
+    password:
+    database: "monitor"
+    metric: "...stub..." # as we use this conf file for different tool, we should pass metric explicitly in call to influxdb
