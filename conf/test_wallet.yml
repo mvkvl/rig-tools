@@ -1,0 +1,23 @@
+
+crypto:
+  rvn:
+    mining: RJScDPpw882YDY4KCgHseD4dkKqULS4Q9o
+    holding: RFoiopePMogfS52RQDzpkixPAUtUYxM8xx
+  zen:
+   mining: znaeo7DAAXTu2nED61CekLwYF5XyCZk4cnG
+   holding: zndx2zEHowzDuKLZrprZtrBeMxJzZiqS6jv
+  zec:
+   mining: t1fW4kLzgLhtpabdB8mA5uQEwwrgkDGLwuN
+   holding: t1b6FNqZ39ep1F6L3cq4sYC6roEZ9ZAdqVa
+
+output:
+  console:
+    enabled: yes
+  influxdb:
+    enabled: yes
+    server: localhost
+    port: 8086
+    login:
+    password:
+    database: "monitor"
+    metric: "balance.wallet"

@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+
+import conf
+import config
+from optparse import OptionParser
+from services import WalletBalance as WalletBalance
+
+if __name__ == '__main__':
+
+    # gets program arguments
+    def get_program_arguments():
+        parser = OptionParser()
+        parser.add_option("-c", "--config", dest="config",  help="configuration file")
+        (options, arguments) = parser.parse_args()
+        return options, arguments
+
+    opts, args = get_program_arguments()
+
+    if not opts.config:
+        raise ValueError("configuration file argument not passed")
+
+    conf   = config.read(opts.config)
+    result = WalletBalance(conf["wallet"]).query()
+
+    # print result to stdout if console output is enabled in configuration
+    if config.plugin_enabled("output", "console", conf):
+        import output.console
+        output.console.output(result)
+
+    # save result to influxdb if influxdb output is enabled in configuration
+    if config.plugin_enabled("output", "influxdb", conf):
+        import output.influxdb
+        output.influxdb.save_wallet_balance(result, conf["output"]["influxdb"], metric="balance.wallet")
+#
+# # reads configuration from YAML file
+# def read_conf(file):
+#     conf = {}
+#     with open(file) as fp:
+#         conf = yaml.load(fp)
+#     return conf
+#
+# # gets program arguments
+# def get_program_arguments():
+#     parser = OptionParser()
+#     parser.add_option("-c", "--config", dest="config",  help="configuration file")
+#     (options, arguments) = parser.parse_args()
+#     return options, arguments
+#
+# opts, args = get_program_arguments()
+#
+# if not opts.config:
+#     raise ValueError("configuration file argument not passed")
+#
+# conf   = read_conf(opts.config)
+# result = to_conf(balance_query(to_query(conf["crypto"]), get_wallet_balance))
+#
+# # print result to stdout if console output is enabled in configuration
+# if conf.get("output") and                          \
+#    conf.get("output").get("console") and           \
+#    conf.get("output").get("console").get("enabled"):
+#       import output.console
+#       output.console.output(result)
+#
+# # save result to influxdb if influxdb output is enabled in configuration
+# if conf.get("output") and                           \
+#    conf.get("output").get("influxdb") and           \
+#    conf.get("output").get("influxdb").get("enabled"):
+#       import output.influxdb
+#       output.influxdb.save_wallet_balance(result, conf.get("output").get("influxdb"))

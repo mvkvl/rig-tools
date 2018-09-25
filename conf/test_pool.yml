@@ -1,0 +1,24 @@
+pool:
+  rvn:
+    coinblockers:   RJScDPpw882YDY4KCgHseD4dkKqULS4Q9o
+    suprnova:       31e9901956730f3b206c2841c3696aec77c7f72aa00548390c0204f1a4a1edf0
+  zen:
+    suprnova:       31e9901956730f3b206c2841c3696aec77c7f72aa00548390c0204f1a4a1edf0
+    miningpoolhub:  679b19b656f56e144bdd853b47a04a46711d58d8db1e0b13c43be56d1422ac59_413303
+  zec:
+    suprnova:       31e9901956730f3b206c2841c3696aec77c7f72aa00548390c0204f1a4a1edf0
+    nanopool:       t1fW4kLzgLhtpabdB8mA5uQEwwrgkDGLwuN
+    flypool:        t1fW4kLzgLhtpabdB8mA5uQEwwrgkDGLwuN
+    miningpoolhub:  679b19b656f56e144bdd853b47a04a46711d58d8db1e0b13c43be56d1422ac59_413303
+
+output:
+  console:
+    enabled: yes
+  influxdb:
+    enabled: yes
+    server: localhost
+    port: 8086
+    login:
+    password:
+    database: "monitor"
+    metric: "balance.pool"

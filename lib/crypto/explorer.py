@@ -1,5 +1,5 @@
 import urllib.request
-import crypto.jsonwebapi as ja
+import jsonwebapi as ja
 import json
 
 # https://insight.is
