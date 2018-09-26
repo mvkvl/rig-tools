@@ -8,7 +8,8 @@ class minerapi:
         miners = {
             "bminer" : bminer,
             'ewbf'   : ewbf,
-            "zenemy" : zenemy
+            "zenemy" : zenemy,
+            "trex"   : trex
             # 'ccminer': ccminerapi,
             # 'dstm': dstmapi,
         }

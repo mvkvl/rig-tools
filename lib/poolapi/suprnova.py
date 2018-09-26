@@ -109,14 +109,6 @@ class SuprnovaAPI:
                 # w_data['average']  = w.average()
         else:
             w_data = self.workers()
-            # w_data = []
-            # workers = self.workers()
-            # for w in workers:
-            #     cw = workers.get(w)
-            #     if cw.hashrate() > 0:
-            #         w_data.append({"name": cw.name(),
-            #                        "chashrate": tools.to_float(cw.hashrate()),
-            #                        "ahashrate": tools.to_float(cw.average())})
         return g_data, w_data
 
 
