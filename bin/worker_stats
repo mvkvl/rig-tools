@@ -11,7 +11,8 @@ if __name__ == '__main__':
     # gets program arguments
     def get_program_arguments():
         parser = OptionParser()
-        parser.add_option("-c", "--config", dest="config",  help="configuration file")
+        parser.add_option("-c", "--config", dest="config",
+                                            help="configuration file")
         (options, arguments) = parser.parse_args()
         return options, arguments
 
@@ -32,5 +33,7 @@ if __name__ == '__main__':
     # save result to influxdb if influxdb output is enabled in configuration
     if config.plugin_enabled("output", "influxdb", conf):
         import output.influxdb
-        output.influxdb.save_worker_stats(result, conf["output"]["influxdb"], "rig.worker")
-        output.influxdb.save_gpu_stats(result, conf["output"]["influxdb"], "rig.gpu")
+        output.influxdb.save_worker_stats(result, conf["output"]["influxdb"],
+                                                  metric="rig.worker")
+        output.influxdb.save_gpu_stats(result, conf["output"]["influxdb"],
+                                               metric="rig.gpu")
