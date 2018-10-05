@@ -1,3 +1,6 @@
 test.yml
 __pycache__
 test*.yml
+conf/miner.worker.conf
+conf/test2.worker.conf
+tasks.todo
