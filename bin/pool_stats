@@ -3,7 +3,7 @@
 import conf
 import config
 from optparse import OptionParser
-from services import PoolStats as PoolStats
+from crypto import PoolStats as PoolStats
 
 if __name__ == '__main__':
 

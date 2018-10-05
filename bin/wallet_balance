@@ -3,7 +3,7 @@
 import conf
 import config
 from optparse import OptionParser
-from services import WalletBalance as WalletBalance
+from crypto import WalletBalance as WalletBalance
 
 if __name__ == '__main__':
 

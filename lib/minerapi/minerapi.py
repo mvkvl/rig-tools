@@ -1,6 +1,7 @@
 from bminerapi import bminer
 from ewbfapi   import ewbf
 from zenemyapi import zenemy
+from trexapi   import trex
 
 class minerapi:
     @staticmethod

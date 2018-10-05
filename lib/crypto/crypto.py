@@ -5,6 +5,9 @@ from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 from explorer import Explorer
 from poolapi  import poolapi
+from minerapi import minerapi
+
+from pprint import pprint
 
 THREAD_POOL_SIZE = 8
 
@@ -94,11 +97,6 @@ class PoolBalance(object):
     def query(self):
         return self.__to_conf(self.__balance_query(self.__to_query(self.conf), self.__get_pool_balance))
 
-class MinerStats(object):
-
-    def __init__(self, conf):
-        pass
-
 class PoolStats(object):
 
     # performs up to THREAD_POOL_SIZE web requests in parallel
@@ -160,4 +158,22 @@ class PoolStats(object):
                         if not result.get(p):
                             result[p] = {}
                         result[p][c] = d
+        return result
+
+class WorkerStats(object):
+
+    def __init__(self, conf):
+        self.conf = conf
+        pass
+
+    def query(self):
+        result = {}
+        for cfile in self.conf:
+            with open(cfile) as f:
+                d = json.load(f)
+                if not result.get(d["rig"]):
+                    result[d["rig"]] = {}
+                result[d["rig"]][d["worker"]] = \
+                              minerapi.instance(d["miner"], "{}:{}"
+                                      .format(d["host"], d["apiport"])).status()
         return result

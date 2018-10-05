@@ -9,22 +9,27 @@ import json
 class Explorer(object):
 
     balance_api = {
+        "btc":  None, # TODO
         "zec": "https://api.zcha.in/v2/mainnet/accounts/%WALLET%",
         "zcl":  None, # TODO
         "zen": "https://explorer.zensystem.io/insight-api-zen/addr/%WALLET%?noTxList=1",
         "rvn": "https://ravencoin.network/api/addr/%WALLET%?noTxList=1",
         "xmr":  None  # TODO
-    }
+     }
 
     network_api = {
         "rvn": {
-            "url"  : "https://ravencoin.network/api/status?q=getMiningInfo",
-            "field": "miningInfo",     # field of response to read
+            "url"    : "https://ravencoin.network/api/status?q=getMiningInfo",
+            "field"  : "miningInfo",     # field of response to read
             "diff"   : "difficulty",   # response item for network difficulty
             "nethash": "networkhashps" # response item for network hashrate
-        }
-        # TODO: zec, zcl, zen, xmr
-    }
+      },
+        "btc": None, # TODO
+        "zec": None, # TODO
+        "zcl": None, # TODO
+        "zen": None, # TODO
+        "xmr": None  # TODO
+     }
 
     def __init__(self, crypto, wallet=None):
         self.crypto = crypto

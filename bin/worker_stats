@@ -2,8 +2,9 @@
 
 import conf
 import config
+import json
 from optparse import OptionParser
-from services import PoolBalance as PoolBalance
+from crypto import WorkerStats as WorkerStats
 
 if __name__ == '__main__':
 
@@ -19,8 +20,9 @@ if __name__ == '__main__':
     if not opts.config:
         raise ValueError("configuration file argument not passed")
 
+    result = {}
     conf   = config.read(opts.config)
-    result = PoolStats(conf["miner"]).query()
+    result = WorkerStats(conf["worker"]).query()
 
     # print result to stdout if console output is enabled in configuration
     if config.plugin_enabled("output", "console", conf):
@@ -30,4 +32,5 @@ if __name__ == '__main__':
     # save result to influxdb if influxdb output is enabled in configuration
     if config.plugin_enabled("output", "influxdb", conf):
         import output.influxdb
-        output.influxdb.save_miner_stats(result, conf["output"]["influxdb"])
+        output.influxdb.save_worker_stats(result, conf["output"]["influxdb"], "rig.worker")
+        output.influxdb.save_gpu_stats(result, conf["output"]["influxdb"], "rig.gpu")

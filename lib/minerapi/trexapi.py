@@ -16,14 +16,17 @@ class trex:
     timestamp = None
 
     def __init__(self, api_url):
-        self.api = "{}/summary".format(api_url)
+        if api_url.startswith("http://") or api_url.startswith("https://"):
+            self.api = "{}/summary".format(api_url)
+        else:
+            self.api = "http://{}/summary".format(api_url)
 
     def process_data(self, raw_data):
         # print(json.dumps(raw_data, indent=2, separators=(',', ': ')))
         total_hr = 0
         total_pw = 0
         gpus = []
-        for gpu in raw_data['miners']:
+        for gpu in raw_data['gpus']:
             gpuid = gpu['gpu_id']
             gpuhr = gpu['hashrate'] / 1000000.0
             gputm = gpu['temperature']
