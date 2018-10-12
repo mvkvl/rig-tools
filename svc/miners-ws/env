@@ -1,0 +1,3 @@
+MINERS_DATA_DIR=/miners
+FLASK_ENV=production
+LOG_LEVEL=ERROR

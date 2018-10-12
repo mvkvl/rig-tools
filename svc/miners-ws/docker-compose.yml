@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  miners-ws:
+    container_name: miners-ws
+    hostname: miners-ws
+    image: mvkvl/uwsgi
+    volumes:
+      - /var/run/miner:/miners
+      - ./service:/service
+      - ./env:/env
+    ports:
+      - 9876:8888
