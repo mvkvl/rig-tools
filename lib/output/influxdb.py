@@ -72,6 +72,34 @@ def prepare_pool_stats_data(data, conf, metric=None):
     return result
 
 # creates data array to save to influxdb
+def prepare_pool_worker_stats_data(data, conf, metric=None):
+    def make_data_point(metric, pool, crypto, worker, hr, avg):
+        res =  {"measurement": "{}".format(metric),
+                "tags": {
+                    "worker": worker,
+                    "crypto": crypto,
+                    "pool"  : pool,
+                },
+                "fields": {
+                    "hashrate": hr,
+                    "average" : avg
+                }
+               }
+        return res
+    result = []
+    m = metric or conf.get("metric")
+    for rig in data:
+        for worker in data.get(rig):
+            h = float(data[rig][worker]['pool']['hashrate'])
+            a = float(data[rig][worker]['pool']['average'])
+            p = data[rig][worker]['pool']['name']
+            c = data[rig][worker]['crypto']
+            # print("{}.{}.{}: {}/{}".format(p, worker, c, h, a))
+            point = make_data_point(m, p, c, worker, h, a)
+            result.append(point)
+    return result
+
+# creates data array to save to influxdb
 def prepare_worker_stats_data(data, conf, metric=None):
     # creates single data point for influxdb
     def make_data_point(metric, rig, worker):
@@ -121,50 +149,107 @@ def prepare_gpu_stats_data(data, conf, metric=None):
                 result.append(pt)
     return result
 
+# creates data array to save to influxdb
+def prepare_traffic_stats_data(data, conf, metric=None):
+    # creates single data point for influxdb
+    def make_data_point(metric, host, interface):
+        res =  {"measurement": "{}".format(metric),
+                "tags": {
+                    "host"     : host,
+                    "interface": interface,
+                },
+                "fields": {
+                }
+               }
+        return res
+    result = []
+    for h in data:
+        for i in data[h]:
+            m = metric or conf.get("metric")
+            pt = make_data_point(m, h, i)
+            pt["fields"]["in"]  = data[h][i]['rx'] # float(g.get(""))
+            pt["fields"]["out"] = data[h][i]['tx'] # float(g.get("hashrate"))
+            result.append(pt)
+    return result
+
+
 # connect to influxdb
 def __connect_influx(conf):
     return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
 
-# save wallets' balances to influxdb
-def save_wallet_balance(data, conf, metric=None):
+def __write_data(conf, data):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
-    if not client.write_points(prepare_wallet_balance_data(data, conf, metric)):
-        raise Exception("could not write data to InfluxDB")
+    # if not client.write_points(data):
+    #     raise Exception("could not write data to InfluxDB")
     client.close()
+
+
+# save wallets' balances to influxdb
+def save_wallet_balance(data, conf, metric=None):
+    __write_data(conf, prepare_wallet_balance_data(data, conf, metric))
+    # print(prepare_wallet_balance_data(data, conf, metric))
+    # client = __connect_influx(conf)
+    # client.switch_database(conf["database"])
+    # if not client.write_points():
+    #     raise Exception("could not write data to InfluxDB")
+    # client.close()
 
 # save pools' balances to influxdb
 def save_pool_balance(data, conf, metric=None):
-    client = __connect_influx(conf)
-    client.switch_database(conf["database"])
-    if not client.write_points(prepare_pool_balance_data(data, conf, metric)):
-        raise Exception("could not write data to InfluxDB")
-    client.close()
+    __write_data(conf, prepare_pool_balance_data(data, conf, metric))
+    # client = __connect_influx(conf)
+    # client.switch_database(conf["database"])
+    # if not client.write_points(prepare_pool_balance_data(data, conf, metric)):
+    #     raise Exception("could not write data to InfluxDB")
+    # client.close()
 
 # save pool stats to influxdb
 def save_pool_stats(data, conf, metric=None):
-   client = __connect_influx(conf)
-   client.switch_database(conf["database"])
-   if not client.write_points(prepare_pool_stats_data(data, conf, metric)):
-       raise Exception("could not write data to InfluxDB")
-   client.close()
+    __write_data(conf, prepare_pool_stats_data(data, conf, metric))
+   # client = __connect_influx(conf)
+   # client.switch_database(conf["database"])
+   # if not client.write_points(prepare_pool_stats_data(data, conf, metric)):
+   #     raise Exception("could not write data to InfluxDB")
+   # client.close()
+
+# save pool worker stats to influxdb
+def save_pool_worker_stats(data, conf, metric=None):
+    __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric))
+   # print(prepare_pool_worker_stats_data(data, conf, metric))
+   # client = __connect_influx(conf)
+   # client.switch_database(conf["database"])
+   # if not client.write_points(prepare_pool_worker_stats_data(data, conf, metric)):
+   #     raise Exception("could not write data to InfluxDB")
+   # client.close()
 
 # save worker stats to influxdb
 def save_worker_stats(data, conf, metric=None):
-   client = __connect_influx(conf)
-   client.switch_database(conf["database"])
-   if not client.write_points(prepare_worker_stats_data(data, conf, metric)):
-       raise Exception("could not write data to InfluxDB")
-   client.close()
+    __write_data(conf, prepare_worker_stats_data(data, conf, metric))
+   # client = __connect_influx(conf)
+   # client.switch_database(conf["database"])
+   # if not client.write_points(prepare_worker_stats_data(data, conf, metric)):
+   #     raise Exception("could not write data to InfluxDB")
+   # client.close()
 
 # save GPU stats to influxdb
 def save_gpu_stats(data, conf, metric=None):
-    client = __connect_influx(conf)
-    client.switch_database(conf["database"])
-    if not client.write_points(prepare_gpu_stats_data(data, conf, metric)):
-        raise Exception("could not write data to InfluxDB")
-    client.close()
+    __write_data(conf, prepare_gpu_stats_data(data, conf, metric))
+    # client = __connect_influx(conf)
+    # client.switch_database(conf["database"])
+    # if not client.write_points(prepare_gpu_stats_data(data, conf, metric)):
+    #     raise Exception("could not write data to InfluxDB")
+    # client.close()
 
+# save traffic stats to influxdb
+def save_traffic_stats(data, conf, metric=None):
+    __write_data(conf, prepare_traffic_stats_data(data, conf, metric))
+    # print(json.dumps(prepare_traffic_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    # client = __connect_influx(conf)
+    # client.switch_database(conf["database"])
+    # if not client.write_points(prepare_traffic_stats_data(data, conf, metric)):
+    #     raise Exception("could not write data to InfluxDB")
+    # client.close()
 
 
 

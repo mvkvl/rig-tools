@@ -20,7 +20,7 @@ class Explorer(object):
     network_api = {
         "rvn": {
             "url"    : "https://ravencoin.network/api/status?q=getMiningInfo",
-            "field"  : "miningInfo",     # field of response to read
+            "field"  : "miningInfo",   # field of response to read
             "diff"   : "difficulty",   # response item for network difficulty
             "nethash": "networkhashps" # response item for network hashrate
       },
