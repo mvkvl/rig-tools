@@ -6,6 +6,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 from explorer import Explorer
 from poolapi  import poolapi
 from minerapi import minerapi
+import jsonwebapi as ja
 
 from pprint import pprint
 
@@ -177,3 +178,72 @@ class WorkerStats(object):
                               minerapi.instance(d["miner"], "{}:{}"
                                       .format(d["host"], d["apiport"])).status()
         return result
+
+class WorkerStatsCombo(object):
+
+    def __init__(self, rigs, pools):
+        self.conf = {}
+        self.conf['rigs']  = rigs
+        self.conf['pools'] = pools
+
+    def __get_active_miners(self):
+        miners = []
+        rigs   = self.conf['rigs']
+        for r in rigs:
+            ip = rigs[r]['url'].replace("http://","").split(":")[0]
+            for w in ja.request(rigs[r]['url']):
+                miners.append({
+                    'worker'  : w.get('worker'),
+                    'host'    : ip,
+                    'apiport' : w.get('apiport'),
+                    'crypto'  : w.get('crypto'),
+                    'pool'    : w.get('pool'),
+                    'miner'   : w.get('miner'),
+                    'rig'     : r
+                })
+        return miners
+    def __get_pool_conf(self, miners):
+        result = {}
+        pools  = self.conf['pools']
+        for miner in miners:
+            try:
+                key = pools.get(miner['crypto']).get(miner['pool'])
+            except:
+                key = None
+            if not result.get(miner['crypto']):
+                result[miner['crypto']] = {}
+            result[miner['crypto']][miner['pool']] = key
+        return result
+
+    def __get_miners_data(self, miners):
+        result = {}
+        for miner in miners:
+            if not result.get(miner["rig"]):
+                result[miner["rig"]] = {}
+            result[miner["rig"]][miner["worker"]] = \
+                          minerapi.instance(miner["miner"], "{}:{}"
+                                  .format(miner["host"], miner["apiport"])).status()
+            result[miner["rig"]][miner["worker"]]['crypto'] = miner["crypto"]
+            result[miner["rig"]][miner["worker"]]['pool'] = miner["pool"]
+        return result
+    def __get_pools_data(self, pools):
+        return PoolStats(pools).query()
+    def __combine(self, m_data, p_data):
+        for rig in m_data:
+            for w in m_data[rig]:
+                dt = p_data[m_data[rig][w]['pool']][m_data[rig][w]['crypto']]['workers'][w]
+                pd = {}
+                pd['name']     = m_data[rig][w]['pool']
+                pd['hashrate'] = dt.hashrate()
+                pd['average']  = dt.average()
+                m_data[rig][w]['pool'] = pd
+        return m_data
+
+    def query(self):
+        miners = self.__get_active_miners()
+        pools  = self.__get_pool_conf(miners)
+        m_data = self.__get_miners_data(miners)
+        p_data = self.__get_pools_data(pools)
+        result = self.__combine(m_data, p_data)
+        return result
+        # print(json.dumps(result, sort_keys=False,  indent=2,  separators=(',', ': ')))

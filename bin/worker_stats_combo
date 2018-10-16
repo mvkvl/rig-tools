@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+
+import conf
+import config
+import json
+from optparse import OptionParser
+from crypto import WorkerStatsCombo as WorkerStatsCombo
+
+if __name__ == '__main__':
+
+    # gets program arguments
+    def get_program_arguments():
+        parser = OptionParser()
+        parser.add_option("-c", "--config", dest="config",
+                                            help="configuration file")
+        (options, arguments) = parser.parse_args()
+        return options, arguments
+
+    opts, args = get_program_arguments()
+
+    if not opts.config:
+        raise ValueError("configuration file argument not passed")
+
+    result = {}
+    conf   = config.read(opts.config)
+    result = WorkerStatsCombo(conf["rig"], conf["pool"]).query()
+
+    # print result to stdout if console output is enabled in configuration
+    if config.plugin_enabled("output", "console", conf):
+        import output.console
+        output.console.output(result)
+
+    # save result to influxdb if influxdb output is enabled in configuration
+    if config.plugin_enabled("output", "influxdb", conf):
+        import output.influxdb
+        output.influxdb.save_worker_stats(result, conf["output"]["influxdb"],
+                                                  metric="rig.worker")
+        output.influxdb.save_gpu_stats(result, conf["output"]["influxdb"],
+                                               metric="rig.gpu")
+        output.influxdb.save_pool_worker_stats(result, conf["output"]["influxdb"],
+                                                       metric="pool.worker")
