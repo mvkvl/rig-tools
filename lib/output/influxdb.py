@@ -1,5 +1,5 @@
 from influxdb import InfluxDBClient
-import json
+import json, time
 
 # connect to influxdb
 def __connect_influx(conf):
@@ -9,11 +9,14 @@ def __write_data(conf, data):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
 
-    try:
-        client.write_points(data)
-    except Exception as ex:
-        print("ERROR: {}".format(ex))
-
+    for i in range (3):
+        try:
+            if client.write_points(data):
+                break
+            time.sleep(1)
+        except Exception as ex:
+            pass
+            # print("ERROR: {}".format(ex))
     # if not client.write_points(data):
     #     raise Exception("could not write data to InfluxDB")
     client.close()
