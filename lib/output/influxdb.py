@@ -11,7 +11,7 @@ def __write_data(conf, data):
 
     try:
         client.write_points(data)
-    catch Exception as ex:
+    except Exception as ex:
         print("ERROR: {}".format(ex))
 
     # if not client.write_points(data):
