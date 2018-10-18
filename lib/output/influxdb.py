@@ -9,10 +9,10 @@ def __write_data(conf, data):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
 
-    # try:
-    #     client.write_points(data)
-    # catch Exception as ex:
-    #     print("ERROR: {}".format(ex))
+    try:
+        client.write_points(data)
+    catch Exception as ex:
+        print("ERROR: {}".format(ex))
 
     # if not client.write_points(data):
     #     raise Exception("could not write data to InfluxDB")
@@ -345,8 +345,8 @@ def save_aggregated_power(data, conf, metric=None):
     __write_data(conf, prepare_aggregated_power_data(data, conf, metric))
 
 def save_power_value(data, conf, metric=None):
-    print(json.dumps(prepare_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    # __write_data(conf, prepare_power_data(data, conf, metric))
+    # print(json.dumps(prepare_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    __write_data(conf, prepare_power_data(data, conf, metric))
 
 
 
