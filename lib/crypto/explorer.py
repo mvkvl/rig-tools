@@ -23,7 +23,7 @@ class Explorer(object):
             "field"  : "miningInfo",   # field of response to read
             "diff"   : "difficulty",   # response item for network difficulty
             "nethash": "networkhashps" # response item for network hashrate
-      },
+         },
         "btc": None, # TODO
         "zec": None, # TODO
         "zcl": None, # TODO
@@ -43,7 +43,7 @@ class Explorer(object):
     def get_network_api(self):
         result = self.network_api.get(self.crypto)
         if not result:
-            raise ValueError("Unsupported network requested: {}".format(self.crypto))
+            raise ValueError("Unsupported blockchain requested: {}".format(self.crypto))
         return result
 
     def balance(self):

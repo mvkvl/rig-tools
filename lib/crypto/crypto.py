@@ -247,3 +247,27 @@ class WorkerStatsCombo(object):
         result = self.__combine(m_data, p_data)
         return result
         # print(json.dumps(result, sort_keys=False,  indent=2,  separators=(',', ': ')))
+
+class BlockchainInfo(object):
+
+    def __init__(self, conf):
+        self.conf = conf
+        pass
+
+    def query(self):
+        result = {}
+        for crypto in self.conf:
+            result[crypto] = Explorer(crypto).network()
+        return result
+
+class CryptoPrice(object):
+
+    def __init__(self, conf):
+        self.conf = conf
+        pass
+
+    def query(self):
+        result = {}
+        for crypto in self.conf:
+            result[crypto] = Explorer(crypto).price(self.conf[crypto])
+        return result

@@ -1,6 +1,33 @@
 from influxdb import InfluxDBClient
 import json
 
+# connect to influxdb
+def __connect_influx(conf):
+    return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
+
+def __write_data(conf, data):
+    client = __connect_influx(conf)
+    client.switch_database(conf["database"])
+
+    # try:
+    #     client.write_points(data)
+    # catch Exception as ex:
+    #     print("ERROR: {}".format(ex))
+
+    # if not client.write_points(data):
+    #     raise Exception("could not write data to InfluxDB")
+    client.close()
+
+def read_data(conf, query, field):
+    client = __connect_influx(conf)
+    client.switch_database(conf["database"])
+    rs = client.query(query)
+    v  = list(rs.get_points())
+    client.close()
+    return float(v[0].get(field)) if v else None
+
+
+
 # creates data array to save to influxdb
 def prepare_wallet_balance_data(data, conf, metric=None):
     # creates single data point for influxdb
@@ -172,17 +199,68 @@ def prepare_traffic_stats_data(data, conf, metric=None):
             result.append(pt)
     return result
 
+# creates data array to save to influxdb
+def prepare_blockchain_data(data, conf, metric=None):
+    # creates single data point for influxdb
+    def make_data_point(metric, crypto):
+        res =  {"measurement": "{}".format(metric),
+                "tags": {
+                    "crypto" : crypto,
+                },
+                "fields": {
+                }
+               }
+        return res
+    result = []
+    for c in data:
+        m = metric or conf.get("metric")
+        pt = make_data_point(m, c)
+        pt["fields"]["diff"]    = data[c]['diff']
+        pt["fields"]["nethash"] = data[c]['nethash']
+        result.append(pt)
+    return result
 
-# connect to influxdb
-def __connect_influx(conf):
-    return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
+def prepare_price_data(data, conf, metric=None):
+    # creates single data point for influxdb
+    def make_data_point(metric, crypto):
+        res =  {"measurement": "{}".format(metric),
+                "tags": {
+                    "crypto" : crypto,
+                },
+                "fields": {
+                }
+               }
+        return res
+    result = []
+    for crypto in data:
+        m = metric or conf.get("metric")
+        pt = make_data_point(m, crypto)
+        for cur in data[crypto]:
+            pt['fields'][cur.lower()] = data[crypto][cur]
+        result.append(pt)
+    return result
 
-def __write_data(conf, data):
-    client = __connect_influx(conf)
-    client.switch_database(conf["database"])
-    # if not client.write_points(data):
-    #     raise Exception("could not write data to InfluxDB")
-    client.close()
+def prepare_aggregated_power_data(data, conf, metric=None):
+    result = {"measurement": "{}".format(metric),
+            "tags": {
+                "outlet" : data["outlet"],
+            },
+            "fields": {
+                "meter": data["value"]
+            }
+           }
+    return [result]
+
+def prepare_power_data(data, conf, metric=None):
+    result = {"measurement": "{}".format(metric),
+            "tags": {
+                "outlet" : data["outlet"],
+            },
+            "fields": {
+                "value": data["value"]
+            }
+           }
+    return [result]
 
 
 # save wallets' balances to influxdb
@@ -251,11 +329,24 @@ def save_traffic_stats(data, conf, metric=None):
     #     raise Exception("could not write data to InfluxDB")
     # client.close()
 
+# save blockchain stats to influxdb
+def save_blockchain_info(data, conf, metric=None):
+    # print(json.dumps(prepare_blockchain_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    __write_data(conf, prepare_blockchain_data(data, conf, metric))
 
+# save crypto price to influxdb
+def save_crypto_price(data, conf, metric=None):
+    # print(json.dumps(prepare_price_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    __write_data(conf, prepare_price_data(data, conf, metric))
 
+# save aggregated power to influxdb
+def save_aggregated_power(data, conf, metric=None):
+    # print(json.dumps(prepare_aggregated_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    __write_data(conf, prepare_aggregated_power_data(data, conf, metric))
 
-
-
+def save_power_value(data, conf, metric=None):
+    print(json.dumps(prepare_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    # __write_data(conf, prepare_power_data(data, conf, metric))
 
 
 
