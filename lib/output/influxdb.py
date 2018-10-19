@@ -11,7 +11,7 @@ def __write_data(conf, data, module=None):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
 
-    prefix = "{}: ".format(module) if module else ""
+    prefix = "{:15s}: ".format(module) if module else ""
 
     for i in range (MAX_WRITE_ATTEMPTS):
         try:
