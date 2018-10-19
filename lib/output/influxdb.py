@@ -13,9 +13,13 @@ def __write_data(conf, data):
         try:
             if client.write_points(data):
                 break
+            else:
+                print("Can't write to InfluxDB")
             time.sleep(1)
         except Exception as ex:
+            print("InfluxDB write error: {}".format(ex))
             pass
+
             # print("ERROR: {}".format(ex))
     # if not client.write_points(data):
     #     raise Exception("could not write data to InfluxDB")
@@ -197,8 +201,8 @@ def prepare_traffic_stats_data(data, conf, metric=None):
         for i in data[h]:
             m = metric or conf.get("metric")
             pt = make_data_point(m, h, i)
-            pt["fields"]["in"]  = data[h][i]['rx'] # float(g.get(""))
-            pt["fields"]["out"] = data[h][i]['tx'] # float(g.get("hashrate"))
+            pt["fields"]["in"]  = float(data[h][i]['rx']) # float(g.get(""))
+            pt["fields"]["out"] = float(data[h][i]['tx']) # float(g.get("hashrate"))
             result.append(pt)
     return result
 
