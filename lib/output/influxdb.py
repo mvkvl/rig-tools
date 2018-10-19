@@ -1,6 +1,8 @@
 from influxdb import InfluxDBClient
 import json, time
 
+MAX_WRITE_ATTEMPTS = 5
+
 # connect to influxdb
 def __connect_influx(conf):
     return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
@@ -11,7 +13,7 @@ def __write_data(conf, data, module=None):
 
     prefix = "{}: ".format(module) if module else ""
 
-    for i in range (3):
+    for i in range (MAX_WRITE_ATTEMPTS):
         try:
             if client.write_points(data):
                 print("{}write OK".format(prefix))
