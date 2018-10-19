@@ -5,19 +5,22 @@ import json, time
 def __connect_influx(conf):
     return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
 
-def __write_data(conf, data):
+def __write_data(conf, data, module=None):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
+
+    prefix = "{}: ".format(module) if module else ""
 
     for i in range (3):
         try:
             if client.write_points(data):
+                print("{}write OK".format(prefix))
                 break
             else:
-                print("Can't write to InfluxDB")
+                print("{}Can't write to InfluxDB".format(prefix))
             time.sleep(1)
         except Exception as ex:
-            print("InfluxDB write error: {}".format(ex))
+            print("{}InfluxDB write error: {}".format(prefix, ex))
             pass
 
             # print("ERROR: {}".format(ex))
@@ -271,8 +274,8 @@ def prepare_power_data(data, conf, metric=None):
 
 
 # save wallets' balances to influxdb
-def save_wallet_balance(data, conf, metric=None):
-    __write_data(conf, prepare_wallet_balance_data(data, conf, metric))
+def save_wallet_balance(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_wallet_balance_data(data, conf, metric), module=module)
     # print(prepare_wallet_balance_data(data, conf, metric))
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
@@ -281,8 +284,8 @@ def save_wallet_balance(data, conf, metric=None):
     # client.close()
 
 # save pools' balances to influxdb
-def save_pool_balance(data, conf, metric=None):
-    __write_data(conf, prepare_pool_balance_data(data, conf, metric))
+def save_pool_balance(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_pool_balance_data(data, conf, metric), module=module)
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
     # if not client.write_points(prepare_pool_balance_data(data, conf, metric)):
@@ -290,8 +293,8 @@ def save_pool_balance(data, conf, metric=None):
     # client.close()
 
 # save pool stats to influxdb
-def save_pool_stats(data, conf, metric=None):
-    __write_data(conf, prepare_pool_stats_data(data, conf, metric))
+def save_pool_stats(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_pool_stats_data(data, conf, metric), module=module)
    # client = __connect_influx(conf)
    # client.switch_database(conf["database"])
    # if not client.write_points(prepare_pool_stats_data(data, conf, metric)):
@@ -299,8 +302,8 @@ def save_pool_stats(data, conf, metric=None):
    # client.close()
 
 # save pool worker stats to influxdb
-def save_pool_worker_stats(data, conf, metric=None):
-    __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric))
+def save_pool_worker_stats(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module)
    # print(prepare_pool_worker_stats_data(data, conf, metric))
    # client = __connect_influx(conf)
    # client.switch_database(conf["database"])
@@ -309,8 +312,8 @@ def save_pool_worker_stats(data, conf, metric=None):
    # client.close()
 
 # save worker stats to influxdb
-def save_worker_stats(data, conf, metric=None):
-    __write_data(conf, prepare_worker_stats_data(data, conf, metric))
+def save_worker_stats(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_worker_stats_data(data, conf, metric), module=module)
    # client = __connect_influx(conf)
    # client.switch_database(conf["database"])
    # if not client.write_points(prepare_worker_stats_data(data, conf, metric)):
@@ -318,8 +321,8 @@ def save_worker_stats(data, conf, metric=None):
    # client.close()
 
 # save GPU stats to influxdb
-def save_gpu_stats(data, conf, metric=None):
-    __write_data(conf, prepare_gpu_stats_data(data, conf, metric))
+def save_gpu_stats(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module)
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
     # if not client.write_points(prepare_gpu_stats_data(data, conf, metric)):
@@ -327,8 +330,8 @@ def save_gpu_stats(data, conf, metric=None):
     # client.close()
 
 # save traffic stats to influxdb
-def save_traffic_stats(data, conf, metric=None):
-    __write_data(conf, prepare_traffic_stats_data(data, conf, metric))
+def save_traffic_stats(data, conf, metric=None, module=None):
+    __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module)
     # print(json.dumps(prepare_traffic_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
@@ -337,23 +340,23 @@ def save_traffic_stats(data, conf, metric=None):
     # client.close()
 
 # save blockchain stats to influxdb
-def save_blockchain_info(data, conf, metric=None):
+def save_blockchain_info(data, conf, metric=None, module=None):
     # print(json.dumps(prepare_blockchain_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_blockchain_data(data, conf, metric))
+    __write_data(conf, prepare_blockchain_data(data, conf, metric), module=module)
 
 # save crypto price to influxdb
-def save_crypto_price(data, conf, metric=None):
+def save_crypto_price(data, conf, metric=None, module=None):
     # print(json.dumps(prepare_price_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_price_data(data, conf, metric))
+    __write_data(conf, prepare_price_data(data, conf, metric), module=module)
 
 # save aggregated power to influxdb
-def save_aggregated_power(data, conf, metric=None):
+def save_aggregated_power(data, conf, metric=None, module=None):
     # print(json.dumps(prepare_aggregated_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_aggregated_power_data(data, conf, metric))
+    __write_data(conf, prepare_aggregated_power_data(data, conf, metric), module=module)
 
-def save_power_value(data, conf, metric=None):
+def save_power_value(data, conf, metric=None, module=None):
     # print(json.dumps(prepare_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_power_data(data, conf, metric))
+    __write_data(conf, prepare_power_data(data, conf, metric), module=module)
 
 
 
