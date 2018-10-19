@@ -16,14 +16,15 @@ def __write_data(conf, data, module=None):
     for i in range (MAX_WRITE_ATTEMPTS):
         try:
             if client.write_points(data):
-                print("{}write OK".format(prefix))
+                print("{}InfluxDB write OK".format(prefix))
                 break
             else:
                 print("{}Can't write to InfluxDB".format(prefix))
             time.sleep(1)
         except Exception as ex:
-            print("{}InfluxDB write error: {}".format(prefix, ex))
-            pass
+            s = str(ex).replace("b'","").replace("\\n'","") #.replace("'","\"")
+            err = json.loads(s).get("error")
+            print("{}InfluxDB write error - {}".format(prefix, err))
 
             # print("ERROR: {}".format(ex))
     # if not client.write_points(data):
