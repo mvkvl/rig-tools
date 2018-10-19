@@ -248,7 +248,7 @@ def prepare_price_data(data, conf, metric=None):
         m = metric or conf.get("metric")
         pt = make_data_point(m, crypto)
         for cur in data[crypto]:
-            pt['fields'][cur.lower()] = data[crypto][cur]
+            pt['fields'][cur.lower()] = float(data[crypto][cur])
         result.append(pt)
     return result
 
@@ -258,7 +258,7 @@ def prepare_aggregated_power_data(data, conf, metric=None):
                 "outlet" : data["outlet"],
             },
             "fields": {
-                "meter": data["value"]
+                "meter": float(data["value"])
             }
            }
     return [result]
@@ -269,7 +269,7 @@ def prepare_power_data(data, conf, metric=None):
                 "outlet" : data["outlet"],
             },
             "fields": {
-                "value": data["value"]
+                "value": float(data["value"])
             }
            }
     return [result]
@@ -278,68 +278,30 @@ def prepare_power_data(data, conf, metric=None):
 # save wallets' balances to influxdb
 def save_wallet_balance(data, conf, metric=None, module=None):
     __write_data(conf, prepare_wallet_balance_data(data, conf, metric), module=module)
-    # print(prepare_wallet_balance_data(data, conf, metric))
-    # client = __connect_influx(conf)
-    # client.switch_database(conf["database"])
-    # if not client.write_points():
-    #     raise Exception("could not write data to InfluxDB")
-    # client.close()
 
 # save pools' balances to influxdb
 def save_pool_balance(data, conf, metric=None, module=None):
     __write_data(conf, prepare_pool_balance_data(data, conf, metric), module=module)
-    # client = __connect_influx(conf)
-    # client.switch_database(conf["database"])
-    # if not client.write_points(prepare_pool_balance_data(data, conf, metric)):
-    #     raise Exception("could not write data to InfluxDB")
-    # client.close()
 
 # save pool stats to influxdb
 def save_pool_stats(data, conf, metric=None, module=None):
     __write_data(conf, prepare_pool_stats_data(data, conf, metric), module=module)
-   # client = __connect_influx(conf)
-   # client.switch_database(conf["database"])
-   # if not client.write_points(prepare_pool_stats_data(data, conf, metric)):
-   #     raise Exception("could not write data to InfluxDB")
-   # client.close()
 
 # save pool worker stats to influxdb
 def save_pool_worker_stats(data, conf, metric=None, module=None):
     __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module)
-   # print(prepare_pool_worker_stats_data(data, conf, metric))
-   # client = __connect_influx(conf)
-   # client.switch_database(conf["database"])
-   # if not client.write_points(prepare_pool_worker_stats_data(data, conf, metric)):
-   #     raise Exception("could not write data to InfluxDB")
-   # client.close()
 
 # save worker stats to influxdb
 def save_worker_stats(data, conf, metric=None, module=None):
     __write_data(conf, prepare_worker_stats_data(data, conf, metric), module=module)
-   # client = __connect_influx(conf)
-   # client.switch_database(conf["database"])
-   # if not client.write_points(prepare_worker_stats_data(data, conf, metric)):
-   #     raise Exception("could not write data to InfluxDB")
-   # client.close()
 
 # save GPU stats to influxdb
 def save_gpu_stats(data, conf, metric=None, module=None):
     __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module)
-    # client = __connect_influx(conf)
-    # client.switch_database(conf["database"])
-    # if not client.write_points(prepare_gpu_stats_data(data, conf, metric)):
-    #     raise Exception("could not write data to InfluxDB")
-    # client.close()
 
 # save traffic stats to influxdb
 def save_traffic_stats(data, conf, metric=None, module=None):
     __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module)
-    # print(json.dumps(prepare_traffic_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    # client = __connect_influx(conf)
-    # client.switch_database(conf["database"])
-    # if not client.write_points(prepare_traffic_stats_data(data, conf, metric)):
-    #     raise Exception("could not write data to InfluxDB")
-    # client.close()
 
 # save blockchain stats to influxdb
 def save_blockchain_info(data, conf, metric=None, module=None):
