@@ -170,7 +170,7 @@ def prepare_gpu_stats_data(data, conf, metric=None):
         res =  {"measurement": "{}".format(metric),
                 "tags": {
                     "host": rig,
-                    "gpu": gpu,
+                    "gpu" : gpu
                 },
                 "fields": {
                 }
@@ -178,6 +178,7 @@ def prepare_gpu_stats_data(data, conf, metric=None):
         return res
     result = []
     for r in data:
+        rig_total_power = 0
         for w in data[r]:
             for g in data[r][w]['gpu']:
                 m = metric or conf.get("metric")
@@ -186,7 +187,16 @@ def prepare_gpu_stats_data(data, conf, metric=None):
                 pt["fields"]["hashrate"]    = float(g.get("hashrate"))
                 pt["fields"]["efficiency"]  = float(g.get("efficiency"))
                 pt["fields"]["temperature"] = float(g.get("temperature"))
+                rig_total_power += g['power']
                 result.append(pt)
+        if rig_total_power > 0:
+            m = metric or conf.get("metric")
+            pt = make_data_point(m, r, "total")
+            pt["fields"]["power"] = float(rig_total_power)
+            # print(json.dumps(pt, sort_keys=True,  indent=2,  separators=(',', ': ')))
+            result.append(pt)
+    # print("-" * 100)
+    # print(json.dumps(result, sort_keys=True,  indent=2,  separators=(',', ': ')))
     return result
 
 # creates data array to save to influxdb
