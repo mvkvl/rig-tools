@@ -14,27 +14,18 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
 
     log = logger.instance(module, loglevel)
 
-    # prefix = "{:15s}: ".format(module) if module else ""
-
     for i in range (MAX_WRITE_ATTEMPTS):
         try:
             if client.write_points(data):
                 log.info("InfluxDB write OK")
-                # print("{}InfluxDB write OK".format(prefix))
                 break
             else:
-                log.warning("InfluxDB write OK")
-                # print("{}Can't write to InfluxDB".format(prefix))
+                log.warning("Can't write to InfluxDB")
             time.sleep(i+1)
         except Exception as ex:
             s = str(ex).replace("b'","").replace("\\n'","") #.replace("'","\"")
             err = json.loads(s).get("error")
             log.error("InfluxDB write error - {}".format(err))
-            # print("{}InfluxDB write error - {}".format(prefix, err))
-
-            # print("ERROR: {}".format(ex))
-    # if not client.write_points(data):
-    #     raise Exception("could not write data to InfluxDB")
     client.close()
 
 def read_data(conf, query, field):
@@ -44,7 +35,6 @@ def read_data(conf, query, field):
     v  = list(rs.get_points())
     client.close()
     return float(v[0].get(field)) if v else None
-
 
 
 # creates data array to save to influxdb
@@ -338,17 +328,3 @@ def save_aggregated_power(data, conf, metric=None, module=None, loglevel="ERROR"
 def save_power_value(data, conf, metric=None, module=None, loglevel="ERROR"):
     # print(json.dumps(prepare_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     __write_data(conf, prepare_power_data(data, conf, metric), module=module, loglevel=loglevel)
-
-
-
-
-
-
-
-
-
-
-
-
-# print(json.dumps(conf, sort_keys=False,  indent=2,  separators=(',', ': ')))
-# print(json.dumps(prepare_wallet_balance_data(data, conf), sort_keys=False,  indent=2,  separators=(',', ': ')))
