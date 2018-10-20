@@ -1,5 +1,6 @@
 from influxdb import InfluxDBClient
 import json, time
+import logger
 
 MAX_WRITE_ATTEMPTS = 5
 
@@ -7,24 +8,29 @@ MAX_WRITE_ATTEMPTS = 5
 def __connect_influx(conf):
     return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
 
-def __write_data(conf, data, module=None):
+def __write_data(conf, data, module="", loglevel="ERROR"):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
 
-    prefix = "{:15s}: ".format(module) if module else ""
+    log = logger.instance(module, loglevel)
+
+    # prefix = "{:15s}: ".format(module) if module else ""
 
     for i in range (MAX_WRITE_ATTEMPTS):
         try:
             if client.write_points(data):
-                print("{}InfluxDB write OK".format(prefix))
+                log.info("InfluxDB write OK")
+                # print("{}InfluxDB write OK".format(prefix))
                 break
             else:
-                print("{}Can't write to InfluxDB".format(prefix))
+                log.warning("InfluxDB write OK")
+                # print("{}Can't write to InfluxDB".format(prefix))
             time.sleep(i+1)
         except Exception as ex:
             s = str(ex).replace("b'","").replace("\\n'","") #.replace("'","\"")
             err = json.loads(s).get("error")
-            print("{}InfluxDB write error - {}".format(prefix, err))
+            log.error("InfluxDB write error - {}".format(err))
+            # print("{}InfluxDB write error - {}".format(prefix, err))
 
             # print("ERROR: {}".format(ex))
     # if not client.write_points(data):
@@ -287,51 +293,51 @@ def prepare_power_data(data, conf, metric=None):
 
 
 # save wallets' balances to influxdb
-def save_wallet_balance(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_wallet_balance_data(data, conf, metric), module=module)
+def save_wallet_balance(data, conf, loglevel="ERROR", module="", metric=None):
+    __write_data(conf, prepare_wallet_balance_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save pools' balances to influxdb
-def save_pool_balance(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_pool_balance_data(data, conf, metric), module=module)
+def save_pool_balance(data, conf, loglevel="ERROR", module="", metric=None):
+    __write_data(conf, prepare_pool_balance_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save pool stats to influxdb
-def save_pool_stats(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_pool_stats_data(data, conf, metric), module=module)
+def save_pool_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
+    __write_data(conf, prepare_pool_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save pool worker stats to influxdb
-def save_pool_worker_stats(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module)
+def save_pool_worker_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
+    __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save worker stats to influxdb
-def save_worker_stats(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_worker_stats_data(data, conf, metric), module=module)
+def save_worker_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
+    __write_data(conf, prepare_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save GPU stats to influxdb
-def save_gpu_stats(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module)
+def save_gpu_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
+    __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save traffic stats to influxdb
-def save_traffic_stats(data, conf, metric=None, module=None):
-    __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module)
+def save_traffic_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
+    __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save blockchain stats to influxdb
-def save_blockchain_info(data, conf, metric=None, module=None):
+def save_blockchain_info(data, conf, metric=None, module=None, loglevel="ERROR"):
     # print(json.dumps(prepare_blockchain_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_blockchain_data(data, conf, metric), module=module)
+    __write_data(conf, prepare_blockchain_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save crypto price to influxdb
-def save_crypto_price(data, conf, metric=None, module=None):
+def save_crypto_price(data, conf, metric=None, module=None, loglevel="ERROR"):
     # print(json.dumps(prepare_price_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_price_data(data, conf, metric), module=module)
+    __write_data(conf, prepare_price_data(data, conf, metric), module=module, loglevel=loglevel)
 
 # save aggregated power to influxdb
-def save_aggregated_power(data, conf, metric=None, module=None):
+def save_aggregated_power(data, conf, metric=None, module=None, loglevel="ERROR"):
     # print(json.dumps(prepare_aggregated_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_aggregated_power_data(data, conf, metric), module=module)
+    __write_data(conf, prepare_aggregated_power_data(data, conf, metric), module=module, loglevel=loglevel)
 
-def save_power_value(data, conf, metric=None, module=None):
+def save_power_value(data, conf, metric=None, module=None, loglevel="ERROR"):
     # print(json.dumps(prepare_power_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    __write_data(conf, prepare_power_data(data, conf, metric), module=module)
+    __write_data(conf, prepare_power_data(data, conf, metric), module=module, loglevel=loglevel)
 
 
 
