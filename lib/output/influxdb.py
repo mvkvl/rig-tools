@@ -20,7 +20,7 @@ def __write_data(conf, data, module=None):
                 break
             else:
                 print("{}Can't write to InfluxDB".format(prefix))
-            time.sleep(1)
+            time.sleep(i+1)
         except Exception as ex:
             s = str(ex).replace("b'","").replace("\\n'","") #.replace("'","\"")
             err = json.loads(s).get("error")
