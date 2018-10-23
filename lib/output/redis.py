@@ -80,7 +80,7 @@ def prepare_pool_worker_stats_data(data, conf, metric=None):
             a = float(data.get(r).get(w).get("pool").get("average"))
             result.append({"{}.{}.{}.{}.hashrate".format(metric, p, c, w): h})
             result.append({"{}.{}.{}.{}.average".format(metric, p, c, w) : a})
-    return data
+    return result
 
 def save_wallet_balance(data, conf, loglevel="ERROR", module="", metric=None):
     # print (json.dumps(prepare_wallet_balance_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
