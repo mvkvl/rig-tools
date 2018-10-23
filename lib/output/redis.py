@@ -1,4 +1,4 @@
-# import redis
+import redis
 import json, time
 import logger
 
@@ -7,6 +7,11 @@ import logger
     # pass
 
 def __write_data(conf, data, module="", loglevel="ERROR"):
+    # print (json.dumps(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': '))
+    # r = redis.Redis(host=conf["host"], port=conf["port"])
+    for k,v in data:
+        print ("{} -> {}".format(k, v))
+
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
     #
@@ -25,7 +30,6 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
     #         err = json.loads(s).get("error")
     #         log.error("InfluxDB write error - {}".format(err))
     # client.close()
-    pass
 
 def prepare_wallet_balance_data(data, conf, metric=None):
     result = []
@@ -111,8 +115,5 @@ def prepare_traffic_stats_data(data, conf, metric=None):
             result.append({"{}.out".format(m): float(data[h][i]['tx'])})
     return result
 
-
-# save traffic stats to influxdb
 def save_traffic_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
-    print (json.dumps(prepare_traffic_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    # __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
+    __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
