@@ -107,8 +107,8 @@ def prepare_traffic_stats_data(data, conf, metric=None):
     for h in data:
         for i in data[h]:
             m = "{}.{}.{}".format(metric, h, i)
-            result.append({"{}.in".format(m): float(data[h][i]['rx']})
-            result.append({"{}.out".format(m): float(data[h][i]['tx']})
+            result.append({"{}.in".format(m): float(data[h][i]['rx'])})
+            result.append({"{}.out".format(m): float(data[h][i]['tx'])})
     return result
 
 
