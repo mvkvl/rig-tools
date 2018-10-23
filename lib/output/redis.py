@@ -8,10 +8,13 @@ import logger
 
 def __write_data(conf, data, module="", loglevel="ERROR"):
     # print (json.dumps(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': '))
-    # r = redis.Redis(host=conf["host"], port=conf["port"])
+    r = redis.Redis(host=conf["host"], port=conf["port"])
     for i in data:
         for k in i:
+            r.set(k, i.get(k))
             print ("{} -> {}".format(k, i.get(k)))
+
+    r.close()
 
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
