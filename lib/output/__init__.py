@@ -32,3 +32,5 @@ def write(conf, data, module="", loglevel="ERROR", metric=None, save_function=No
                               loglevel=loglevel)
             else:
                 print("METHOD NOT FOUND")
+        else:
+            print("WRITE IGNORED")
