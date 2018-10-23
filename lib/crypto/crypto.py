@@ -244,7 +244,7 @@ class WorkerStatsCombo(object):
         pools  = self.__get_pool_conf(miners)
         m_data = self.__get_miners_data(miners)
 
-        if self.conf["pool"]:
+        if self.conf["pools"]:
             p_data = self.__get_pools_data(pools)
             result = self.__combine(m_data, p_data)
         else:
