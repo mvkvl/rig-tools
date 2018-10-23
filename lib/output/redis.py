@@ -10,7 +10,8 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
     # print (json.dumps(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': '))
     # r = redis.Redis(host=conf["host"], port=conf["port"])
     for i in data:
-        print ("{}".format(i))
+        for k in i:
+            print ("{} -> {}".format(k, i.get(k)))
 
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
