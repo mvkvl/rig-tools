@@ -12,17 +12,21 @@ def write(conf, data, module="", loglevel="ERROR", metric=None, save_function=No
     # save result to influxdb if influxdb output is enabled in configuration
     if config.plugin_enabled("output", "influxdb", conf):
         if metric and save_function:
-            save_function(data=data,
-                          conf=conf["output"]["influxdb"],
-                          metric=metric,
-                          module=module,
-                          loglevel=loglevel)
+            method = getattr(output.influxdb, save_function)
+            if method:
+                method(data=data,
+                              conf=conf["output"]["influxdb"],
+                              metric=metric,
+                              module=module,
+                              loglevel=loglevel)
 
     # save result to redis if redis output is enabled in configuration
     if config.plugin_enabled("output", "redis", conf):
         if metric and save_function:
-            save_function(data=data,
-                          conf=conf["output"]["redis"],
-                          metric=metric,
-                          module=module,
-                          loglevel=loglevel)
+            method = getattr(output.redis, save_function)
+            if method:
+                method(data=data,
+                              conf=conf["output"]["redis"],
+                              metric=metric,
+                              module=module,
+                              loglevel=loglevel)
