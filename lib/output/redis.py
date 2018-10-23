@@ -70,6 +70,21 @@ def prepare_gpu_stats_data(data, conf, metric=None):
         if rig_total_power > 0:
             result.append({"{}.{}.power:{}".format(metric, "total", r): float(rig_total_power)})
     return result
+def prepare_pool_worker_stats_data(data, conf, metric=None):
+    return data
+    # result = []
+    # for r in data:
+    #     rig_total_power = 0.0
+    #     for w in data[r]:
+    #         for g in data[r][w]['gpu']:
+    #             rig_total_power = float(g.get("power"))
+    #             result.append({"{}.{}.power:{}".format(metric, g["id"], r): float(g.get("power"))})
+    #             result.append({"{}.{}.hashrate:{}".format(metric, g["id"], r): float(g.get("hashrate"))})
+    #             result.append({"{}.{}.efficiency:{}".format(metric, g["id"], r): float(g.get("efficiency"))})
+    #             result.append({"{}.{}.temperature:{}".format(metric, g["id"], r): float(g.get("temperature"))})
+    #     if rig_total_power > 0:
+    #         result.append({"{}.{}.power:{}".format(metric, "total", r): float(rig_total_power)})
+    # return result
 
 def save_wallet_balance(data, conf, loglevel="ERROR", module="", metric=None):
     # print (json.dumps(prepare_wallet_balance_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
@@ -86,3 +101,6 @@ def save_worker_stats(data, conf, loglevel="ERROR", module="", metric=None):
 def save_gpu_stats(data, conf, loglevel="ERROR", module="", metric=None):
     print (json.dumps(prepare_gpu_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     # __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module, loglevel=loglevel)
+def save_pool_worker_stats(data, conf, loglevel="ERROR", module="", metric=None):
+    print (json.dumps(prepare_pool_worker_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    # __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
