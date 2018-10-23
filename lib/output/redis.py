@@ -2,10 +2,6 @@ import redis
 import json, time
 import logger
 
-# def __connect_influx(conf):
-#     return InfluxDBClient(host=conf["server"], port=conf["port"]) # , username=conf["login"], password=conf["password"] ssl=True, verify_ssl=True)
-    # pass
-
 def __write_data(conf, data, module="", loglevel="ERROR"):
     # print (json.dumps(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': '))
     r = redis.Redis(host=conf["host"], port=conf["port"])
@@ -13,25 +9,6 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
         for k in i:
             r.set(k, i.get(k))
             print ("{} -> {}".format(k, i.get(k)))
-
-    # client = __connect_influx(conf)
-    # client.switch_database(conf["database"])
-    #
-    # log = logger.instance(module, loglevel)
-    #
-    # for i in range (MAX_WRITE_ATTEMPTS):
-    #     try:
-    #         if client.write_points(data):
-    #             log.info("InfluxDB write OK")
-    #             break
-    #         else:
-    #             log.warning("Can't write to InfluxDB")
-    #         time.sleep(i+1)
-    #     except Exception as ex:
-    #         s = str(ex).replace("b'","").replace("\\n'","") #.replace("'","\"")
-    #         err = json.loads(s).get("error")
-    #         log.error("InfluxDB write error - {}".format(err))
-    # client.close()
 
 def prepare_wallet_balance_data(data, conf, metric=None):
     result = []
