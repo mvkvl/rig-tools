@@ -98,5 +98,21 @@ def save_gpu_stats(data, conf, loglevel="ERROR", module="", metric=None):
     print (json.dumps(prepare_gpu_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     # __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 def save_pool_worker_stats(data, conf, loglevel="ERROR", module="", metric=None):
-    print (json.dumps(prepare_pool_worker_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    # __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
+    # print (json.dumps(prepare_pool_worker_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
+
+
+def prepare_traffic_stats_data(data, conf, metric=None):
+    result = []
+    for h in data:
+        for i in data[h]:
+            m = "{}.{}.{}".format(metric, h, i)
+            result.append({"{}.in".format(m): float(data[h][i]['rx']})
+            result.append({"{}.out".format(m): float(data[h][i]['tx']})
+    return result
+
+
+# save traffic stats to influxdb
+def save_traffic_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
+    print (json.dumps(prepare_traffic_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    # __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
