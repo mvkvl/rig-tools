@@ -77,7 +77,7 @@ def prepare_pool_worker_stats_data(data, conf, metric=None):
             c = data.get(r).get(w).get("crypto")
             p = data.get(r).get(w).get("pool").get("name")
             h = float(data.get(r).get(w).get("pool").get("hashrate"))
-            a = flaot(data.get(r).get(w).get("pool").get("average"))
+            a = float(data.get(r).get(w).get("pool").get("average"))
             result.append({"{}.{}.{}.{}.hashrate".format(metric, p, c, w): h})
             result.append({"{}.{}.{}.{}.average".format(metric, p, c, w) : a})
     return data
