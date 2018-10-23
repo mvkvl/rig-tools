@@ -64,9 +64,9 @@ def prepare_gpu_stats_data(data, conf, metric=None):
             for g in data[r][w]['gpu']:
                 rig_total_power = float(g.get("power"))
                 result.append({"{}.{}.power:{}".format(metric, g["id"], r): float(g.get("power"))})
-                result.append({"{}.{}.hashrate:{}".format(metric, g["id"], r): float(g.get("hashrate")})
-                result.append({"{}.{}.efficiency:{}".format(metric, g["id"], r): float(g.get("efficiency")})
-                result.append({"{}.{}.temperature:{}".format(metric, g["id"], r): float(g.get("temperature")})
+                result.append({"{}.{}.hashrate:{}".format(metric, g["id"], r): float(g.get("hashrate"))})
+                result.append({"{}.{}.efficiency:{}".format(metric, g["id"], r): float(g.get("efficiency"))})
+                result.append({"{}.{}.temperature:{}".format(metric, g["id"], r): float(g.get("temperature"))})
         if rig_total_power > 0:
             result.append({"{}.{}.power:{}".format(metric, "total", r): float(rig_total_power)})
     return result
