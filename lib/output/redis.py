@@ -49,14 +49,13 @@ def prepare_pool_stats_data(data, conf, metric=None):
                 result.append({"{}.{}.{}.{}.average".format(metric, p, c, w): data.get(p).get(c).get("workers").get(w).average()})
     return result
 def prepare_worker_stats_data(data, conf, metric=None):
-    # result = []
-    # for p in data:
-    #     for c in data.get(p):
-    #         for w in data.get(p).get(c).get("workers"):
-    #             result.append({"{}.{}.{}.{}.hashrate".format(metric, p, c, w): data.get(p).get(c).get("workers").get(w).hashrate()})
-    #             result.append({"{}.{}.{}.{}.average".format(metric, p, c, w): data.get(p).get(c).get("workers").get(w).average()})
-    # return result
-    return data
+    result = []
+    for r in data:
+        for w in data.get(r):
+            result.append({"{}.{}.power:{}".format(metric, w, r): data.get(r).get(w).get("power")})
+            result.append({"{}.{}.hashrate:{}".format(metric, w, r): data.get(r).get(w).get("hashrate")})
+            result.append({"{}.{}.efficiency:{}".format(metric, w, r): data.get(r).get(w).get("efficiency")})
+    return result
 
 def save_wallet_balance(data, conf, loglevel="ERROR", module="", metric=None):
     # print (json.dumps(prepare_wallet_balance_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
