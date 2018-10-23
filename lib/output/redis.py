@@ -56,7 +56,7 @@ def prepare_worker_stats_data(data, conf, metric=None):
             result.append({"{}.{}.hashrate:{}".format(metric, w, r): data.get(r).get(w).get("hashrate")})
             result.append({"{}.{}.efficiency:{}".format(metric, w, r): data.get(r).get(w).get("efficiency")})
     return result
-def prepare_gpu_stats_data(data, conf, metric=None):)
+def prepare_gpu_stats_data(data, conf, metric=None):
     result = []
     for r in data:
         rig_total_power = 0.0
