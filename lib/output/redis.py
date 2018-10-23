@@ -14,8 +14,6 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
             r.set(k, i.get(k))
             print ("{} -> {}".format(k, i.get(k)))
 
-    r.close()
-
     # client = __connect_influx(conf)
     # client.switch_database(conf["database"])
     #
