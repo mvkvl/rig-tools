@@ -181,7 +181,7 @@ class WorkerStats(object):
 
 class WorkerStatsCombo(object):
 
-    def __init__(self, rigs, pools):
+    def __init__(self, rigs, pools=None):
         self.conf = {}
         self.conf['rigs']  = rigs
         self.conf['pools'] = pools
@@ -243,8 +243,13 @@ class WorkerStatsCombo(object):
         miners = self.__get_active_miners()
         pools  = self.__get_pool_conf(miners)
         m_data = self.__get_miners_data(miners)
-        p_data = self.__get_pools_data(pools)
-        result = self.__combine(m_data, p_data)
+
+        if self.conf["pool"]:
+            p_data = self.__get_pools_data(pools)
+            result = self.__combine(m_data, p_data)
+        else:
+            result = m_data
+
         return result
         # print(json.dumps(result, sort_keys=False,  indent=2,  separators=(',', ': ')))
 
