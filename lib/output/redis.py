@@ -96,3 +96,9 @@ def prepare_traffic_stats_data(data, conf, metric=None):
 
 def save_traffic_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
     __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
+
+
+def save_crypto_price(data, conf, metric=None, module=None, loglevel="ERROR"):
+    pass
+def save_blockchain_info(data, conf, metric=None, module=None, loglevel="ERROR"):
+    pass
