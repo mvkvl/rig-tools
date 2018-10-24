@@ -8,7 +8,7 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
     for i in data:
         for k in i:
             r.set(k, i.get(k))
-            print ("{} -> {}".format(k, i.get(k)))
+            # print ("{} -> {}".format(k, i.get(k)))
 
 def prepare_wallet_balance_data(data, conf, metric=None):
     result = []
@@ -78,8 +78,8 @@ def save_worker_stats(data, conf, loglevel="ERROR", module="", metric=None):
     # print (json.dumps(prepare_worker_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     __write_data(conf, prepare_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 def save_gpu_stats(data, conf, loglevel="ERROR", module="", metric=None):
-    print (json.dumps(prepare_gpu_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
-    # __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module, loglevel=loglevel)
+    # print (json.dumps(prepare_gpu_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
+    __write_data(conf, prepare_gpu_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 def save_pool_worker_stats(data, conf, loglevel="ERROR", module="", metric=None):
     # print (json.dumps(prepare_pool_worker_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
