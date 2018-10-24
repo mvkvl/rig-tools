@@ -102,3 +102,5 @@ def save_crypto_price(data, conf, metric=None, module=None, loglevel="ERROR"):
     pass
 def save_blockchain_info(data, conf, metric=None, module=None, loglevel="ERROR"):
     pass
+def save_power_value(data, conf, metric=None, module=None, loglevel="ERROR"):
+    pass
