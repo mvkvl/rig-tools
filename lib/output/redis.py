@@ -14,14 +14,14 @@ def prepare_wallet_balance_data(data, conf, metric=None):
     result = []
     for c in data:
         for k in data.get(c):
-            result.append({"{}.{}.{}".format(metric, c, k): data.get(c).get(k)})
+            result.append({"{}.{}:{}".format(metric, k, c): data.get(c).get(k)})
     return result
 def prepare_pool_balance_data(data, conf, metric=None):
     result = []
     for p in data:
         for c in data.get(p):
             for k in data.get(p).get(c):
-                result.append({"{}.{}.{}.{}".format(metric, p, c, k): data.get(p).get(c).get(k)})
+                result.append({"{}.{}:{}.{}".format(metric, k, p, c): data.get(p).get(c).get(k)})
     return result
 def prepare_pool_stats_data(data, conf, metric=None):
     result = []
@@ -35,9 +35,9 @@ def prepare_worker_stats_data(data, conf, metric=None):
     result = []
     for r in data:
         for w in data.get(r):
-            result.append({"{}.{}.power:{}".format(metric, w, r): float(data.get(r).get(w).get("power"))})
-            result.append({"{}.{}.hashrate:{}".format(metric, w, r): data.get(r).get(w).get("hashrate")})
-            result.append({"{}.{}.efficiency:{}".format(metric, w, r): data.get(r).get(w).get("efficiency")})
+            result.append({"{}.power:{}.{}".format(metric, r, w): float(data.get(r).get(w).get("power"))})
+            result.append({"{}.hashrate:{}.{}".format(metric, r, w): data.get(r).get(w).get("hashrate")})
+            result.append({"{}.efficiency:{}.{}".format(metric, r, w): data.get(r).get(w).get("efficiency")})
     return result
 def prepare_gpu_stats_data(data, conf, metric=None):
     result = []
@@ -46,12 +46,12 @@ def prepare_gpu_stats_data(data, conf, metric=None):
         for w in data[r]:
             for g in data[r][w]['gpu']:
                 rig_total_power = float(g.get("power"))
-                result.append({"{}.{}.power:{}".format(metric, g["id"], r): float(g.get("power"))})
-                result.append({"{}.{}.hashrate:{}".format(metric, g["id"], r): float(g.get("hashrate"))})
-                result.append({"{}.{}.efficiency:{}".format(metric, g["id"], r): float(g.get("efficiency"))})
-                result.append({"{}.{}.temperature:{}".format(metric, g["id"], r): float(g.get("temperature"))})
+                result.append({"{}.power:{}.{}".format(metric, r, g["id"]): float(g.get("power"))})
+                result.append({"{}.hashrate:{}.{}".format(metric, r, g["id"]): float(g.get("hashrate"))})
+                result.append({"{}.efficiency:{}.{}".format(metric, r, g["id"]): float(g.get("efficiency"))})
+                result.append({"{}.temperature:{}.{}".format(metric, r, g["id"]): float(g.get("temperature"))})
         if rig_total_power > 0:
-            result.append({"{}.{}.power:{}".format(metric, "total", r): float(rig_total_power)})
+            result.append({"{}.{}.power:{}".format(metric, r, "total"): float(rig_total_power)})
     return result
 def prepare_pool_worker_stats_data(data, conf, metric=None):
     result = []
@@ -61,8 +61,8 @@ def prepare_pool_worker_stats_data(data, conf, metric=None):
             p = data.get(r).get(w).get("pool").get("name")
             h = float(data.get(r).get(w).get("pool").get("hashrate"))
             a = float(data.get(r).get(w).get("pool").get("average"))
-            result.append({"{}.{}.{}.{}.hashrate".format(metric, p, c, w): h})
-            result.append({"{}.{}.{}.{}.average".format(metric, p, c, w) : a})
+            result.append({"{}.hashrate:{}.{}.{}".format(metric, p, c, w): h})
+            result.append({"{}.average:{}.{}.{}".format(metric, p, c, w) : a})
     return result
 
 def save_wallet_balance(data, conf, loglevel="ERROR", module="", metric=None):
@@ -93,7 +93,6 @@ def prepare_traffic_stats_data(data, conf, metric=None):
             result.append({"{}.in".format(m): float(data[h][i]['rx'])})
             result.append({"{}.out".format(m): float(data[h][i]['tx'])})
     return result
-
 def save_traffic_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
     __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
