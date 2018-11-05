@@ -202,6 +202,7 @@ class WorkerStatsCombo(object):
                     'rig'     : r
                 })
         return miners
+
     def __get_pool_conf(self, miners):
         result = {}
         pools  = self.conf['pools']
@@ -226,8 +227,10 @@ class WorkerStatsCombo(object):
             result[miner["rig"]][miner["worker"]]['crypto'] = miner["crypto"]
             result[miner["rig"]][miner["worker"]]['pool'] = miner["pool"]
         return result
+
     def __get_pools_data(self, pools):
         return PoolStats(pools).query()
+
     def __combine(self, m_data, p_data):
         for rig in m_data:
             for w in m_data[rig]:
@@ -250,8 +253,8 @@ class WorkerStatsCombo(object):
         else:
             result = m_data
 
-        return result
         # print(json.dumps(result, sort_keys=False,  indent=2,  separators=(',', ': ')))
+        return result
 
 class BlockchainInfo(object):
 

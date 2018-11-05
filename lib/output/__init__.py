@@ -1,8 +1,12 @@
 import config
 import output
+import redis
 import output.console
 import output.influxdb
 import output.redis
+
+def writeRedis(conf, data):
+    output.redis.writeData(conf["output"]["redis"], data)
 
 def write(conf, data, module="", loglevel="ERROR", metric=None, save_function=None):
     # print result to stdout if console output is enabled in configuration

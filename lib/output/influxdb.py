@@ -1,6 +1,7 @@
 from influxdb import InfluxDBClient
 import json, time
 import logger
+import itertools
 
 MAX_WRITE_ATTEMPTS = 5
 
@@ -28,14 +29,69 @@ def __write_data(conf, data, module="", loglevel="ERROR"):
             log.error("InfluxDB write error - {}".format(err))
     client.close()
 
+def __get_tag_values(metric, tag, cfg):
+    # query = "show tag values from \"monitor\".\"autogen\".\"{}\" with key = {}"
+    query = "show tag values from \"{}\".\"{}\" with key = {}"
+    q = query.format(cfg["database"], metric, tag)
+    v = read_tags(cfg, q, "value")
+    return v
+
+def __get_averaged_value(conf, period, field, metric, params):
+    redisKey = "{}.{}_average_{}:".format(metric, field, period)
+    queryParams = "";
+    for p in params:
+        queryParams += " AND \"{}\" = '{}'".format(p, params.get(p))
+        redisKey += "{}.".format(params.get(p))
+    query = "SELECT mean(\"{}\") AS \"avgfld\" \
+             FROM \"monitor\".\"autogen\".\"{}\" \
+             WHERE time > now() - {} \
+             {} \
+             GROUP BY time({})";
+    q = query.format(field, metric, period, queryParams, period);
+    v = read_data(conf, q, "avgfld")
+    return (redisKey[:-1], v)
+
+def __get_averaged_values(conf, query, period):
+    result = []
+    for av in query:
+        for item in query.get(av):
+            valuesToCheck = []
+            for m in item:
+                listOfLists = []
+                for tag in item.get(m):
+                    tagValues = __get_tag_values(m, tag, conf)
+                    listOfLists.append([(tag, x) for x in tagValues])
+                for li in list(itertools.product(*listOfLists)):
+                    (p, v) = __get_averaged_value(conf, period, av, m, dict((x, y) for x, y in li))
+                    if v:
+                        result.append({'key': p, 'value': v})
+    return result
+
+def aggregate_data(conf, periods, data):
+    result = []
+    for period in periods:
+        avs = __get_averaged_values(conf, data, period)
+        for av in avs:
+            result.append(av)
+    return result
+
 def read_data(conf, query, field):
     client = __connect_influx(conf)
     client.switch_database(conf["database"])
     rs = client.query(query)
     v  = list(rs.get_points())
     client.close()
-    return float(v[0].get(field)) if v else None
-
+    return float(v[0].get(field)) if v and v[0] and v[0].get(field) else None
+def read_tags(conf, query, field):
+    client = __connect_influx(conf)
+    client.switch_database(conf["database"])
+    rs = client.query(query)
+    v  = list(rs.get_points())
+    client.close()
+    res = []
+    for i in v:
+        res.append(i.get('value'))
+    return res
 
 # creates data array to save to influxdb
 def prepare_wallet_balance_data(data, conf, metric=None):

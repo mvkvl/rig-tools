@@ -2,6 +2,12 @@ import redis
 import json, time
 import logger
 
+def writeData(conf, data):
+    r = redis.Redis(host=conf["host"], port=conf["port"])
+    for d in data:
+        r.set(d['key'], d['value'])
+
+
 def __write_data(conf, data, module="", loglevel="ERROR"):
     # print (json.dumps(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': '))
     r = redis.Redis(host=conf["host"], port=conf["port"])
@@ -62,7 +68,7 @@ def prepare_pool_worker_stats_data(data, conf, metric=None):
             h = float(data.get(r).get(w).get("pool").get("hashrate"))
             a = float(data.get(r).get(w).get("pool").get("average"))
             result.append({"{}.hashrate:{}.{}.{}".format(metric, p, c, w): h})
-            result.append({"{}.average:{}.{}.{}".format(metric, p, c, w) : a})
+            # result.append({"{}.average:{}.{}.{}".format(metric, p, c, w) : a})
     return result
 
 def save_wallet_balance(data, conf, loglevel="ERROR", module="", metric=None):
@@ -84,7 +90,6 @@ def save_pool_worker_stats(data, conf, loglevel="ERROR", module="", metric=None)
     # print (json.dumps(prepare_pool_worker_stats_data(data, conf, metric), sort_keys=False,  indent=2,  separators=(',', ': ')))
     __write_data(conf, prepare_pool_worker_stats_data(data, conf, metric), module=module, loglevel=loglevel)
 
-
 def prepare_traffic_stats_data(data, conf, metric=None):
     result = []
     for h in data:
@@ -95,7 +100,6 @@ def prepare_traffic_stats_data(data, conf, metric=None):
     return result
 def save_traffic_stats(data, conf, metric=None, module=None, loglevel="ERROR"):
     __write_data(conf, prepare_traffic_stats_data(data, conf, metric), module=module, loglevel=loglevel)
-
 
 def save_crypto_price(data, conf, metric=None, module=None, loglevel="ERROR"):
     pass
