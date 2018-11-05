@@ -37,11 +37,9 @@ def __get_tag_values(metric, tag, cfg):
     return v
 
 def __get_averaged_value(conf, period, field, metric, params):
-    redisKey = "{}.{}_average_{}:".format(metric, field, period)
     queryParams = "";
     for p in params:
         queryParams += " AND \"{}\" = '{}'".format(p, params.get(p))
-        redisKey += "{}.".format(params.get(p))
     query = "SELECT mean(\"{}\") AS \"avgfld\" \
              FROM \"monitor\".\"autogen\".\"{}\" \
              WHERE time > now() - {} \
@@ -49,7 +47,7 @@ def __get_averaged_value(conf, period, field, metric, params):
              GROUP BY time({})";
     q = query.format(field, metric, period, queryParams, period);
     v = read_data(conf, q, "avgfld")
-    return (redisKey[:-1], v)
+    return v
 
 def __get_averaged_values(conf, query, period):
     result = []
@@ -62,9 +60,10 @@ def __get_averaged_values(conf, query, period):
                     tagValues = __get_tag_values(m, tag, conf)
                     listOfLists.append([(tag, x) for x in tagValues])
                 for li in list(itertools.product(*listOfLists)):
-                    (p, v) = __get_averaged_value(conf, period, av, m, dict((x, y) for x, y in li))
+                    key = "{}.{}_average_{}:{}".format(m, av, period, ".".join([y for x, y in li]))
+                    val = __get_averaged_value(conf, period, av, m, dict((x, y) for x, y in li))
                     if v:
-                        result.append({'key': p, 'value': v})
+                        result.append({'key': key, 'value': val})
     return result
 
 def aggregate_data(conf, periods, data):
