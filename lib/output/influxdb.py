@@ -62,7 +62,7 @@ def __get_averaged_values(conf, query, period):
                 for li in list(itertools.product(*listOfLists)):
                     key = "{}.{}_average_{}:{}".format(m, av, period, ".".join([y for x, y in li]))
                     val = __get_averaged_value(conf, period, av, m, dict((x, y) for x, y in li))
-                    if v:
+                    if val:
                         result.append({'key': key, 'value': val})
     return result
 
